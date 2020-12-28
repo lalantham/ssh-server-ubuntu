@@ -1,26 +1,26 @@
 #!/bin/sh
 
 if [[ $EUID -ne 0 ]]; then
-   echo -e "\e[95mYou must be root to do this.\e[0m" 1>&2
+   echo "\e[95mYou must be root to do this.\e[0m" 1>&2
    exit 100
 fi
 
 apt-get update
 apt-get upgrade -y
 
-echo -e "\e[96mInstalling dependancies\e[0m"
+echo "\e[96mInstalling dependancies\e[0m"
 apt-get install -y libnss3* libnspr4-dev gyp ninja-build git cmake libz-dev build-essential 
 apt-get install -y pkg-config cmake-data net-tools libssl-dev dnsutils speedtest-cli psmisc
 apt-get install -y dropbear stunnel4
 
-echo -e "\e[96mChecking dropbear is installed\e[0m"
+echo "\e[96mChecking dropbear is installed\e[0m"
 FILE=/etc/default/dropbear
 if [ -f "$FILE" ]; then
     cp "$FILE" /etc/default/dropbear.bak
     rm "$FILE"
 fi
 
-echo -e "\e[96mCreating dropbear config\e[0m"
+echo "\e[96mCreating dropbear config\e[0m"
 cat >> "$FILE" <<EOL
 # disabled because OpenSSH is installed
 # change to NO_START=0 to enable Dropbear
@@ -49,14 +49,14 @@ DROPBEAR_BANNER="/etc/issue.net"
 DROPBEAR_RECEIVE_WINDOW=65536
 EOL
 
-echo -e "\e[96mBackup old dropbear banner\e[0m"
+echo "\e[96mBackup old dropbear banner\e[0m"
 FILE2=/etc/issue.net
 if [ -f "$FILE2" ]; then
     cp "$FILE2" /etc/issue.net.bak
     rm "$FILE2"
 fi
 
-echo -e "\e[96mCreating dropbear banner\e[0m"
+echo "\e[96mCreating dropbear banner\e[0m"
 cat >> "$FILE2" <<EOL
 <b><font color="#2E86C1">===============================</font>
 <h4>&#9734; <font color="#FF6347">Private SSH Server</font> &#9734;</h4>
@@ -74,17 +74,17 @@ cat >> "$FILE2" <<EOL
 </br><b><font color="#2E86C1">===============================</font></b><br>
 EOL
 
-echo -e "\e[96mStarting dropdear services\e[0m"
+echo "\e[96mStarting dropdear services\e[0m"
 /etc/init.d/dropbear start
 
-echo -e "\e[96mChecking stunnel is installed\e[0m"
+echo "\e[96mChecking stunnel is installed\e[0m"
 FILE3=/etc/stunnel/stunnel.conf
 if [ -f "$FILE3" ]; then
 	cp "$FILE3" /etc/stunnel/stunnel.conf.bak
 	rm "$FILE3"
 fi
 
-echo -e "\e[96mCreating stunnel config\e[0m"
+echo "\e[96mCreating stunnel config\e[0m"
 cat >> "$FILE3" <<EOL
 cert = /etc/stunnel/stunnel.pem
 client = no
@@ -97,7 +97,7 @@ connect = 444
 accept = 443
 EOL
 
-echo -e "\e[96mCreating keys\e[0m"
+echo "\e[96mCreating keys\e[0m"
 KEYFILE=/etc/stunnel/stunnel.pem
 if [ ! -f "$KEYFILE" ]; then
 	openssl genrsa -out key.pem 2048
@@ -105,13 +105,13 @@ if [ ! -f "$KEYFILE" ]; then
 	cat key.pem cert.pem >> /etc/stunnel/stunnel.pem
 fi
 
-echo -e "\e[96mEnabling stunnel services\e[0m"
+echo "\e[96mEnabling stunnel services\e[0m"
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 
-echo -e "\e[96mStarting stunnel services\e[0m"
+echo "\e[96mStarting stunnel services\e[0m"
 /etc/init.d/stunnel4 start
 
-echo -e "\e[96mCompile and installing badvpn\e[0m"
+echo "\e[96mCompile and installing badvpn\e[0m"
 if [ ! -d "/root/badvpn/" ] 
 then
     sudo dpkg --configure -a
@@ -121,14 +121,14 @@ then
 	make install
 fi
 
-echo -e "\e[96mChecking rc.local is exist\e[0m"
+echo "\e[96mChecking rc.local is exist\e[0m"
 FILE4=/etc/rc.local
 if [ -f "$FILE4" ]; then
     cp "$FILE4" /etc/rc.local.bak
     rm "$FILE4"
 fi
 
-echo -e "\e[96mCreating rc.local\e[0m"
+echo "\e[96mCreating rc.local\e[0m"
 cat >> "$FILE4" <<EOL
 #!/bin/sh -e
 #
@@ -146,20 +146,20 @@ badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 999 --client-socket-sndb
 exit 0
 EOL
 
-echo -e "\e[96mSetting up permissions for rc.local\e[0m"
+echo "\e[96mSetting up permissions for rc.local\e[0m"
 chmod +x /etc/rc.local
 
-echo -e "\e[96mInstalling squid\e[0m"
+echo "\e[96mInstalling squid\e[0m"
 apt-get install -y squid
 
-echo -e "\e[96mChecking squid is installed\e[0m"
+echo "\e[96mChecking squid is installed\e[0m"
 FILE5=/etc/squid/squid.conf
 if [ -f "$FILE5" ]; then
     cp "$FILE5" /etc/squid/squid.conf.bak
     rm "$FILE5"
 fi
 
-echo -e "\e[96mConfiguring squid\e[0m"
+echo "\e[96mConfiguring squid\e[0m"
 pubip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
 cat >> "$FILE5" <<EOL
@@ -192,7 +192,7 @@ refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
 EOL
 
-echo -e "\e[96mEnabling ssh password authentication\e[0m"
+echo "\e[96mEnabling ssh password authentication\e[0m"
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
 echo -e "\e[96mRestarting services. Please wait...\e[0m"
@@ -204,19 +204,19 @@ service ssh restart
 myip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
 echo " "
-echo -e "\e[96mInstallation has been completed!!\e[0m"
+echo "\e[96mInstallation Has Been Completed!!\e[0m"
 echo " "
 echo "--------------------------- Configuration Setup Server -------------------------"
-echo "--------------- Script By Lalantha Madhushan ---------------"
+echo "---------------------      Script By Lalantha Madhushan     --------------------"
 echo "                                lalantha.live                              "
 echo " "
 echo "Server Information"
 echo "   - IP address 	: ${myip}"
 echo "   - SSH 		: 22"
-echo "   - Dropbear 		: 80"
-echo "   - Stunnel 		: 443"
-echo "   - Badvpn 		: 7300"
-echo "   - Squid 		: 8080/3128"
+echo "   - Dropbear 	: 80"
+echo "   - Stunnel 	: 443"
+echo "   - Badvpn 	: 7300"
+echo "   - Squid 	: 8080/3128"
 echo " "
-echo -e "\e[95mCreate users and reboot your vps before use.\e[0m"
+echo "\e[95mCreate users and Reboot Your VPS Before Use.\e[0m"
 echo " "
