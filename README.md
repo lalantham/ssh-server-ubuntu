@@ -10,13 +10,14 @@
   - Squid 		  : 8080/3128
   
 ### Install Instruction
-  - apt update && apt upgrade -y
-  - wget https://raw.githubusercontent.com/lalantham/ssh-server-ubuntu/main/install.sh
-  - chmod +x install.sh
-  - ./install.sh
-  - useradd {username}
-  - passwd {username}
-  - reboot
+  - Allow All Service Ports Mentioned Above.
+  - Run Script
+    - apt update && apt upgrade -y
+    - wget https://raw.githubusercontent.com/lalantham/ssh-server-ubuntu/main/install.sh
+    - chmod +x install.sh
+    - ./install.sh
+  - Create User Account
+  - Reboot
   
 ### Tested On
   - Ubuntu 18.04
