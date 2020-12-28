@@ -1,6 +1,6 @@
 # Ubuntu Autoscript SSH/SSL
 
-###### Using this Script you Can Create Your Own SSH Server.This Script Made for Debian Os.
+###### Using this Script you Can Create Your Own SSH Server.This Script Made for Ubuntu Os.
 
 ### Service Port
   - SSH 		    : 22
