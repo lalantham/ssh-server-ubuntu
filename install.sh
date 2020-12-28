@@ -195,7 +195,7 @@ EOL
 echo "\e[96mEnabling ssh password authentication\e[0m"
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
-echo -e "\e[96mRestarting services. Please wait...\e[0m"
+echo "\e[96mRestarting services. Please wait...\e[0m"
 /etc/init.d/dropbear restart
 /etc/init.d/stunnel4 restart
 service squid restart
@@ -213,10 +213,10 @@ echo " "
 echo "Server Information"
 echo "   - IP address 	: ${myip}"
 echo "   - SSH 		: 22"
-echo "   - Dropbear 	: 80"
-echo "   - Stunnel 	: 443"
-echo "   - Badvpn 	: 7300"
-echo "   - Squid 	: 8080/3128"
+echo "   - Dropbear 		: 80"
+echo "   - Stunnel 		: 443"
+echo "   - Badvpn 		: 7300"
+echo "   - Squid 		: 8080/3128"
 echo " "
 echo "\e[95mCreate users and Reboot Your VPS Before Use.\e[0m"
 echo " "
